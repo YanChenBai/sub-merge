@@ -1,9 +1,10 @@
+import { db, sub } from '#server/db'
 import { eq } from 'drizzle-orm'
-import { db, sub } from '~~/server/db'
-import { parseName } from '~~/server/utils/parse'
 
 export default defineEventHandler(async (event) => {
-  const name = parseName(getRouterParam(event, 'name'))
+  const { name } = await getValidatedRouterParams(event, (params) => {
+    return TValue.Parse(T.Object({ name: T.String() }), params)
+  })
 
   const rows = await db.select({ content: sub.content })
     .from(sub)

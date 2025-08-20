@@ -1,8 +1,11 @@
+import { db, sub } from '#server/db'
 import { eq } from 'drizzle-orm'
-import { db, sub } from '~~/server/db'
 
 export default defineEventHandler(async (event) => {
-  const id = parseId(getRouterParam(event, 'id'))
+  const { id } = await getValidatedRouterParams(event, (params) => {
+    return TValue.Parse(T.Object({ id: T.Number() }), params)
+  })
+
   const rows = await db.select().from(sub).where(eq(sub.id, id)).limit(1)
 
   if (rows.length <= 0)

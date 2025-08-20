@@ -4,3 +4,11 @@
 button { 
     @apply hover:cursor-pointer
 }
+
+button .iconify {
+  @apply size-3.5
+}
+
+:root {
+  --ui-radius: 0.35rem;
+}
