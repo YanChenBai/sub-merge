@@ -1,0 +1,6 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+button { 
+    @apply hover:cursor-pointer
+}
