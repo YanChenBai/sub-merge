@@ -8,17 +8,12 @@ useHead(() => {
 })
 
 const { data: isLogin } = useFetch('/api/validate-auth', { credentials: 'include' })
-const { data: subs, refresh } = useSubQuery()
-
-onMounted(() => {
-  refresh()
-})
 </script>
 
 <template>
   <div v-if="isLogin" class="grid gap-5">
-    <SubTable :data="subs" />
-    <!-- <RuleTable :data="rules" /> -->
+    <SubTable />
+    <RuleTable />
   </div>
   <div v-else>
     <Login />

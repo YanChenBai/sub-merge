@@ -2,29 +2,16 @@
 import type { Table } from '#components'
 import type { Rule } from '#server/db'
 import type { TableColumn } from '@nuxt/ui'
-import type { Schema } from './schema'
 import { UButton, USwitch } from '#components'
 import CreateRuleModal from './CreateRuleModal.vue'
 
-defineProps({
-  data: {
-    type: Array as () => Rule[],
-    required: true,
-  },
-})
-
-const emit = defineEmits<{
-  (e: 'enabled', data: { row: Rule, value: boolean }): void
-  (e: 'remove', data: Rule): void
-  (e: 'submit', data: Schema): void
-}>()
-
 const dialog = useDialog()
+const { remove, setEnabled, isLoading, data } = useRuleQuery()
 
 const columns: TableColumn<Rule>[] = [
   {
     accessorKey: 'id',
-    header: '#',
+    header: 'ID',
     meta: {
       class: { th: 'w-2' },
     },
@@ -43,23 +30,24 @@ const columns: TableColumn<Rule>[] = [
     },
 
     cell({ row }) {
-      function handleUpdate(value: boolean) {
-        emit('enabled', { row: row.original, value })
+      async function handleEnabledUpdate(value: boolean) {
+        await setEnabled({ id: row.original.id, value })
       }
 
-      function handleRemove() {
-        dialog.open({
+      async function handleRemove() {
+        await dialog.open({
           title: '确定要删除该规则吗？',
           confirmLabel: '删除',
         })
-          .then(() => emit('remove', row.original))
+
+        await remove(row.original.id)
       }
 
       return (
         <div class="flex gap-2 justify-end items-center">
           <USwitch
             defaultValue={row.original.enabled}
-            onUpdate:modelValue={handleUpdate}
+            onUpdate:modelValue={handleEnabledUpdate}
           >
           </USwitch>
           <UButton
@@ -80,7 +68,7 @@ const columns: TableColumn<Rule>[] = [
 </script>
 
 <template>
-  <Table :data="data" :columns="columns" :table-max-height="26" title="订阅列表">
+  <Table :data="data ?? []" :columns="columns" :table-max-height="26" title="订阅列表" :loading="isLoading">
     <template #header>
       <div class="flex justify-end">
         <CreateRuleModal />
@@ -88,7 +76,7 @@ const columns: TableColumn<Rule>[] = [
     </template>
     <template #footer>
       <UBadge variant="outline">
-        Total: {{ data.length }}
+        Total: {{ data?.length ?? 0 }}
       </UBadge>
     </template>
   </Table>

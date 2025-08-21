@@ -41,9 +41,10 @@ defineSlots<TableSlots & Omit<CardSlots, 'default'>>()
       }"
       :ui="{
         base: 'w-full',
-        tr: 'border-0',
-        separator: 'bg-muted',
+        tr: 'hover:bg-white/3 transition-all',
         th: 'sticky top-0 inset-x-0 bg-default/75 z-[1] backdrop-blur text-xs',
+        td: 'py-3',
+        separator: 'bg-muted',
       }"
     />
     <template #footer>

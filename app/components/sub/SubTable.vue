@@ -2,30 +2,16 @@
 import type { Table } from '#components'
 import type { Sub } from '#server/db'
 import type { TableColumn } from '@nuxt/ui'
-import type { Schema } from './schema'
 import { UButton } from '#components'
 import CreateSubModal from './CreateSubModal.vue'
 
-defineProps({
-  data: {
-    type: Array as () => Sub[],
-    required: true,
-  },
-})
-
-const emit = defineEmits<{
-  (e: 'refresh', data: Sub): void
-  (e: 'remove', data: Sub): void
-  (e: 'primary', data: Sub): void
-  (e: 'submit', data: Schema): void
-}>()
-
 const dialog = useDialog()
+const { data, isLoading, refreshSub, remove, toggleMainSub } = useSubQuery()
 
 const columns: TableColumn<Sub>[] = [
   {
     accessorKey: 'id',
-    header: '#',
+    header: 'ID',
     meta: {
       class: { th: 'w-[100px]' },
     },
@@ -48,60 +34,60 @@ const columns: TableColumn<Sub>[] = [
     },
 
     cell({ row }) {
-      function handleSetPrimary() {
-        dialog.open({
+      async function handleSetPrimary() {
+        await dialog.open({
           confirmLabel: '确定',
           cancelLabel: '取消',
           title: '确定要设置该订阅为主订阅吗？',
         })
-          .then(() => emit('primary', row.original))
+
+        await toggleMainSub(row.original.id)
       }
 
-      function handleRefresh() {
-        emit('refresh', row.original)
+      async function handleRefresh() {
+        await refreshSub(row.original.id)
       }
 
-      function handleRemove() {
-        dialog.open({
+      async function handleRemove() {
+        await dialog.open({
           title: '确定要删除该订阅吗？',
           confirmLabel: '删除',
         })
-          .then(() => emit('remove', row.original))
+
+        await remove(row.original.id)
       }
 
       return (
         <div class="flex gap-2 justify-end">
           <UButton
             size="sm"
-            color="success"
-            icon="mingcute:refresh-2-fill"
-            variant="soft"
+            color={row.original.main ? 'error' : 'neutral'}
+            variant="ghost"
             loadingAuto
-            onClick={() => handleRefresh()}
+            onClick={handleSetPrimary}
+          >
+            {row.original.main ? '取消' : '设置'}
+            主订阅
+          </UButton>
+
+          <UButton
+            size="sm"
+            color="neutral"
+            icon="mingcute:refresh-2-fill"
+            variant="ghost"
+            loadingAuto
+            onClick={handleRefresh}
           >
             刷新
           </UButton>
 
           <UButton
             size="sm"
-            color="primary"
-            variant="outline"
-            icon="flat-color-icons:key"
-            loadingAuto
-            disabled={row.original.main ?? false}
-            onClick={() => handleSetPrimary()}
-          >
-            设置主订阅
-          </UButton>
-
-          <UButton
-            size="sm"
             color="error"
             icon="fluent:delete-12-regular"
-            variant="soft"
+            variant="ghost"
             loadingAuto
-            disabled={row.original.main ?? false}
-            onClick={() => handleRemove()}
+            onClick={handleRemove}
           >
             删除
           </UButton>
@@ -113,7 +99,7 @@ const columns: TableColumn<Sub>[] = [
 </script>
 
 <template>
-  <Table :data="data" :columns="columns" :table-max-height="20" title="订阅列表">
+  <Table :data="data ?? []" :columns="columns" :table-max-height="20" title="订阅列表" :loading="isLoading">
     <template #header>
       <div class="flex justify-end">
         <CreateSubModal />
@@ -121,7 +107,7 @@ const columns: TableColumn<Sub>[] = [
     </template>
     <template #footer>
       <UBadge variant="outline">
-        Total: {{ data.length }}
+        Total: {{ data?.length ?? 0 }}
       </UBadge>
     </template>
   </Table>

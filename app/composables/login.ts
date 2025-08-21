@@ -5,7 +5,7 @@ export const useLogin = defineQuery(() => {
 
   const { mutateAsync: login, isLoading } = useMutation({
     async mutation(schema: Schema) {
-      return $fetch ('/api/auth', {
+      return $fetch('/api/auth', {
         method: 'POST',
         body: schema,
         credentials: 'include',

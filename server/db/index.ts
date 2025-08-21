@@ -1,6 +1,8 @@
 import process from 'node:process'
-import { drizzle } from 'drizzle-orm/neon-http'
+import { Pool } from '@neondatabase/serverless'
+import { drizzle } from 'drizzle-orm/neon-serverless'
 
 export * from './schema'
 
-export const db = drizzle(process.env.DATABASE_URL!)
+const client = new Pool({ connectionString: process.env.DATABASE_URL })
+export const db = drizzle({ client })

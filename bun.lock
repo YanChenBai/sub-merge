@@ -14,8 +14,10 @@
         "@sinclair/typebox": "^0.34.40",
         "@tailwindcss/vite": "^4.1.12",
         "@vueuse/core": "^13.7.0",
+        "dayjs": "^1.11.13",
         "drizzle-orm": "^0.44.4",
         "drizzle-typebox": "^0.3.3",
+        "ky": "^1.9.0",
         "nuxt": "^4.0.3",
         "nuxtjs-naive-ui": "1.0.2",
         "pinia": "^3.0.3",
@@ -23,6 +25,7 @@
         "vue": "^3.5.18",
         "vue-component-type-helpers": "^3.0.6",
         "vue-router": "^4.5.1",
+        "yaml": "^2.8.1",
       },
       "devDependencies": {
         "@antfu/eslint-config": "^5.2.1",
@@ -941,6 +944,8 @@
 
     "date-fns-tz": ["date-fns-tz@3.2.0", "https://repo.huaweicloud.com/repository/npm/date-fns-tz/-/date-fns-tz-3.2.0.tgz", { "peerDependencies": { "date-fns": "^3.0.0 || ^4.0.0" } }, "sha512-sg8HqoTEulcbbbVXeg84u5UnlsQa8GS5QXMqjjYIhS4abEVVKIUwe0/l/UhrZdKaL/W5eWZNlbTeEIiOXTcsBQ=="],
 
+    "dayjs": ["dayjs@1.11.13", "", {}, "sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg=="],
+
     "db0": ["db0@0.3.2", "https://repo.huaweicloud.com/repository/npm/db0/-/db0-0.3.2.tgz", { "peerDependencies": { "@electric-sql/pglite": "*", "@libsql/client": "*", "better-sqlite3": "*", "drizzle-orm": "*", "mysql2": "*", "sqlite3": "*" }, "optionalPeers": ["@electric-sql/pglite", "@libsql/client", "better-sqlite3", "drizzle-orm", "mysql2", "sqlite3"] }, "sha512-xzWNQ6jk/+NtdfLyXEipbX55dmDSeteLFt/ayF+wZUU5bzKgmrDOxmInUTbyVRp46YwnJdkDA1KhB7WIXFofJw=="],
 
     "de-indent": ["de-indent@1.0.2", "https://repo.huaweicloud.com/repository/npm/de-indent/-/de-indent-1.0.2.tgz", {}, "sha512-e/1zu3xH5MQryN2zdVaF0OrdNLUbvWxzMbi+iNA6Bky7l1RoP8a2fIbRocyHclXt/arDrrR6lL3TqFD9pMQTsg=="],
@@ -1408,6 +1413,8 @@
     "kolorist": ["kolorist@1.8.0", "https://repo.huaweicloud.com/repository/npm/kolorist/-/kolorist-1.8.0.tgz", {}, "sha512-Y+60/zizpJ3HRH8DCss+q95yr6145JXZo46OTpFvDZWLfRCE4qChOyk1b26nMaNpfHHgxagk9dXT5OP0Tfe+dQ=="],
 
     "kuler": ["kuler@2.0.0", "https://repo.huaweicloud.com/repository/npm/kuler/-/kuler-2.0.0.tgz", {}, "sha512-Xq9nH7KlWZmXAtodXDDRE7vs6DU1gTU8zYDHDiWLSip45Egwq3plLHzPn27NgvzL2r1LMPC1vdqh98sQxtqj4A=="],
+
+    "ky": ["ky@1.9.0", "", {}, "sha512-NgBeR/cu7kuC4BAeF1rnXhfoI2uQ9RBe8zl5vo87ASsf1iIQoCeOxyt6Io6K4Ki++5ItCavXAtbEWWCGFciQ6g=="],
 
     "lambda-local": ["lambda-local@2.2.0", "https://repo.huaweicloud.com/repository/npm/lambda-local/-/lambda-local-2.2.0.tgz", { "dependencies": { "commander": "^10.0.1", "dotenv": "^16.3.1", "winston": "^3.10.0" }, "bin": { "lambda-local": "build/cli.js" } }, "sha512-bPcgpIXbHnVGfI/omZIlgucDqlf4LrsunwoKue5JdZeGybt8L6KyJz2Zu19ffuZwIwLj2NAI2ZyaqNT6/cetcg=="],
 
