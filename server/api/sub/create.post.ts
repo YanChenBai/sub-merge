@@ -7,5 +7,6 @@ export default defineEventHandler(async (event) => {
   const data = await readValidatedBody(event, (body) => {
     return TValue.Parse(T.Omit(subInsertSchema, ['updatedAt', 'createdAt', 'content', 'main']), body)
   })
+
   await db.insert(sub).values(data)
 })

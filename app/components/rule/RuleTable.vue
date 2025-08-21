@@ -2,7 +2,9 @@
 import type { Table } from '#components'
 import type { Rule } from '#server/db'
 import type { TableColumn } from '@nuxt/ui'
+import type { Schema } from './schema'
 import { UButton, USwitch } from '#components'
+import CreateRuleModal from './CreateRuleModal.vue'
 
 defineProps({
   data: {
@@ -14,6 +16,7 @@ defineProps({
 const emit = defineEmits<{
   (e: 'enabled', data: { row: Rule, value: boolean }): void
   (e: 'remove', data: Rule): void
+  (e: 'submit', data: Schema): void
 }>()
 
 const dialog = useDialog()
@@ -80,11 +83,13 @@ const columns: TableColumn<Rule>[] = [
   <Table :data="data" :columns="columns" :table-max-height="26" title="订阅列表">
     <template #header>
       <div class="flex justify-end">
-        <UButton>添加</UButton>
+        <CreateRuleModal />
       </div>
     </template>
     <template #footer>
-      123
+      <UBadge variant="outline">
+        Total: {{ data.length }}
+      </UBadge>
     </template>
   </Table>
 </template>

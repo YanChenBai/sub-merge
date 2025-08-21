@@ -16,7 +16,7 @@
     "@neondatabase/serverless": "^1.0.1",
     "@nuxt/ui": "^3.3.2",
     "@pinia/colada": "^0.17.1",
-    "@pinia/colada-nuxt": "https://pkg.pr.new/@pinia/colada-nuxt@7559f86",
+    "@pinia/colada-nuxt": "https://pkg.pr.new/@pinia/colada-nuxt@a9b8b07",
     "@pinia/nuxt": "0.11.2",
     "@sinclair/typebox": "^0.34.40",
     "@tailwindcss/vite": "^4.1.12",

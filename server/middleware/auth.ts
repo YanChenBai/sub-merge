@@ -9,5 +9,8 @@ export default defineEventHandler(async (event) => {
   if (isLogin)
     return
 
-  setResponseStatus(event, 401)
+  throw createError({
+    statusCode: 401,
+    statusMessage: 'Unauthorized',
+  })
 })
