@@ -1,3 +1,4 @@
+import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import tailwindcss from '@tailwindcss/vite'
 
@@ -19,6 +20,9 @@ export default defineNuxtConfig({
     plugins: [
       tailwindcss(),
     ],
+  },
+  nitro: {
+    preset: process.env.PRESET || 'bun',
   },
   imports: {
     dirs: [

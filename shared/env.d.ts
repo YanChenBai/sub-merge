@@ -5,5 +5,8 @@ declare namespace NodeJS {
 
     /** API token */
     readonly API_TOKEN?: string
+
+    /** Nitro preset */
+    readonly PRESET?: string
   }
 }
