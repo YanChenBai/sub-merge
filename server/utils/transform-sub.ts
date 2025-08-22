@@ -40,6 +40,6 @@ export function transformToUri(node: Proxy) {
 }
 
 export function transformToV2ray(proxies: Proxy[]) {
-  const content = proxies.map(transformToUri).filter(Boolean).join()
+  const content = proxies.map(transformToUri).filter(Boolean).join('\n')
   return Buffer.from(content, 'utf8').toString('base64')
 }
