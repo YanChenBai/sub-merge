@@ -309,13 +309,14 @@
   "css.customData": ["./.vscode/tailwindcss.at-rules.json"],
   "cSpell.words": [
     "bunx",
-    "otozuki",
-    "rolldown",
-    "shadcn",
-    "reka",
     "Midware",
     "neondatabase",
-    "typebox"
+    "otozuki",
+    "reka",
+    "rolldown",
+    "shadcn",
+    "typebox",
+    "Vmess"
   ],
   "files.associations": {
     "*.css": "tailwindcss"

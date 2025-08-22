@@ -15,5 +15,9 @@ export const updateSubSchema = T.Intersect([
   }),
 ])
 
+export const targetSchema = T.Object({
+  target: T.Optional(T.String()),
+})
+
 export type CreateSubSchema = TStatic<typeof createSubSchema>
 export type UpdateSubSchema = TStatic<typeof updateSubSchema>

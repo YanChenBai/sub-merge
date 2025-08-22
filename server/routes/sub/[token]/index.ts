@@ -1,25 +1,10 @@
+import type { Proxy, SubContent } from '#server/types'
+import { DIRECT_POINT, EMPTY_SUB, SELECT_POINT } from '#server/constants'
 import { db, rule, sub } from '#server/db'
+import { Platform } from '#server/types'
+import { targetSchema } from '#shared/schema'
 import { desc, eq } from 'drizzle-orm'
 import YAML from 'yaml'
-
-interface Proxies {
-  name: string
-}
-
-interface ProxyGroups {
-  name: string
-  proxies: string[]
-}
-
-interface SubContent {
-  'proxies': Proxies[]
-  'proxy-groups': ProxyGroups[]
-  'rules': string[]
-}
-
-const SELECT_POINT = '🚀 节点选择'
-const DIRECT_POINT = 'DIRECT'
-const EMPTY_SUB = 'proxies:'
 
 // 获取所有规则
 async function getCustomRules() {
@@ -29,6 +14,7 @@ async function getCustomRules() {
 
 export default defineEventHandler(async (event) => {
   const token = getRouterParam(event, 'token')
+  const { target } = await getValidatedQuery(event, data => TValue.Parse(targetSchema, data))
 
   if (!validateToken(token)) {
     throw createError({
@@ -63,14 +49,23 @@ export default defineEventHandler(async (event) => {
     }
   })
 
-  // 主订阅（优先 main，否则取第一个）
-  const primarySubs = subscriptions.find(s => s.main) ?? subscriptions[0]
+  setHeaders(event, {
+    'Content-Type': ' text/plain; charset=utf-8',
+    'X-Content-Type-Options': 'nosniff',
+  })
 
   // 合并所有 proxies
   const allProxies = subscriptions.reduce((pre, cur) => {
     const proxies = cur.content.proxies
     return proxies ? pre.concat(proxies) : pre
-  }, [] as Proxies[])
+  }, [] as Proxy[])
+
+  // 如果指定了 v2ray 直接转换返回
+  if (target === Platform.V2RAY)
+    return transformToV2ray(allProxies)
+
+  // 主订阅（优先 main，否则取第一个）
+  const primarySubs = subscriptions.find(s => s.main) ?? subscriptions[0]
 
   // 所有节点名称
   const allNodeNames = allProxies.map(item => item.name)
@@ -95,11 +90,6 @@ export default defineEventHandler(async (event) => {
         : [DIRECT_POINT, SELECT_POINT, ...allNodeNames]
       return item
     })
-
-  setHeaders(event, {
-    'Content-Type': ' text/plain; charset=utf-8',
-    'X-Content-Type-Options': 'nosniff',
-  })
 
   return YAML.stringify(primarySubs.content)
 })
