@@ -16,8 +16,8 @@ function handleSubmit(data: LoginSchema) {
 </script>
 
 <template>
-  <div class="sm:w-2xl m-auto py-10">
-    <UCard>
+  <div class="p-10 absolute top-0 left-0 w-screen flex justify-center">
+    <UCard class="sm:w-xl h-fit">
       <template #header>
         <h2>登录</h2>
       </template>

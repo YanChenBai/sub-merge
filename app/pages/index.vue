@@ -22,7 +22,7 @@ const items = [
   },
 ] satisfies TabsItem[]
 
-const { data: isLogin, isLoading } = useQuery({
+const { data: isLogin } = useQuery({
   key: () => ['isLogin'],
   query: async () => {
     return $fetch('/api/validate-auth', { credentials: 'include' })
@@ -31,7 +31,7 @@ const { data: isLogin, isLoading } = useQuery({
 </script>
 
 <template>
-  <Transition v-if="!isLoading">
+  <Transition>
     <template v-if="isLogin">
       <UTabs
         :items="items" class="w-full" :default-value="$route.query.tab ? String($route.query.tab) : 'sub'"
@@ -59,7 +59,5 @@ const { data: isLogin, isLoading } = useQuery({
 .v-enter-from,
 .v-leave-to {
   opacity: 0;
-  position: absolute;
-  top: 0;
 }
 </style>

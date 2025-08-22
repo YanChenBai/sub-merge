@@ -149,7 +149,7 @@ onMounted(() => source.value = `${window.origin}/sub/`)
 </script>
 
 <template>
-  <Table :data="data ?? []" :columns="columns" :table-max-height="20" title="订阅列表" :loading="isLoading">
+  <Table :data="data ?? []" :columns="columns" :table-max-height="60" title="订阅列表" :loading="isLoading">
     <template #header>
       <div class="flex justify-end gap-2">
         <UButton

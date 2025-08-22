@@ -19,7 +19,7 @@ const searchData = computed(() => {
   if (!throttled.value)
     return data.value
 
-  return data.value.filter(rule => rule.value.includes(throttled.value))
+  return data.value.filter(rule => rule.value.toLocaleLowerCase().includes(throttled.value.toLocaleLowerCase()))
 })
 
 const columns: TableColumn<Rule>[] = [
@@ -118,7 +118,7 @@ const columns: TableColumn<Rule>[] = [
 </script>
 
 <template>
-  <Table :data="searchData" :columns="columns" :table-max-height="26" title="规则列表" :loading="isLoading">
+  <Table :data="searchData" :columns="columns" :table-max-height="60" title="规则列表" :loading="isLoading">
     <template #header>
       <div class="flex justify-end gap-2 sm:flex-row flex-col">
         <UInput v-model:model-value="input" placeholder="搜索规则" />
