@@ -21,8 +21,19 @@ export default defineNuxtConfig({
       tailwindcss(),
     ],
   },
+  sourcemap: false,
   nitro: {
+    compressPublicAssets: false,
     preset: process.env.PRESET || 'bun',
+    externals: {
+      inline: [
+        'yaml',
+        'dayjs',
+      ],
+      external: [
+        '@iconify-json/noto',
+      ],
+    },
   },
   imports: {
     dirs: [

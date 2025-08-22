@@ -9,7 +9,8 @@ import CreateSubModal from './CreateSubModal.vue'
 const dialog = useDialog()
 const { modal: subModal } = useUpdateSub()
 const { data, isLoading, refreshSub, remove, toggleMainSub } = useSubQuery()
-const { copy } = useClipboard({ source: `${window.origin}/sub/` })
+const source = ref('')
+const { copy } = useClipboard({ source })
 
 const columns: TableColumn<Sub>[] = [
   {
@@ -120,6 +121,8 @@ const columns: TableColumn<Sub>[] = [
 function handleCopy() {
   copy()
 }
+
+onMounted(() => source.value = `${window.origin}/sub/`)
 </script>
 
 <template>

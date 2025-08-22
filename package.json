@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@iconify-json/noto": "^1.2.6",
-    "@iconify/vue": "^5.0.0",
     "@neondatabase/serverless": "^1.0.1",
     "@nuxt/ui": "^3.3.2",
     "@pinia/colada": "^0.17.1",
@@ -24,7 +23,6 @@
     "dayjs": "^1.11.13",
     "drizzle-orm": "^0.44.4",
     "drizzle-typebox": "^0.3.3",
-    "ky": "^1.9.0",
     "nuxt": "^4.0.3",
     "pinia": "^3.0.3",
     "tailwindcss": "^4.1.12",
@@ -37,5 +35,8 @@
     "@antfu/eslint-config": "^5.2.1",
     "drizzle-kit": "^0.31.4",
     "eslint": "^9.33.0"
+  },
+  "overrides": {
+    "vite": "npm:rolldown-vite@latest"
   }
 }
