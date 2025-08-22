@@ -101,5 +101,5 @@ export default defineEventHandler(async (event) => {
     'X-Content-Type-Options': 'nosniff',
   })
 
-  return YAML.stringify(primarySubs)
+  return YAML.stringify(primarySubs.content)
 })
