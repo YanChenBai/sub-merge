@@ -6,5 +6,8 @@ export default defineEventHandler(async (event) => {
     return TValue.Parse(createSubSchema, body)
   })
 
-  await db.insert(sub).values(data)
+  await db.insert(sub).values({
+    name: data.name.trim(),
+    url: data.url.trim(),
+  })
 })

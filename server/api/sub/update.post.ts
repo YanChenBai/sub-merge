@@ -8,6 +8,9 @@ export default defineEventHandler(async (event) => {
   })
 
   await db.update(sub)
-    .set({ name, url })
+    .set({
+      name: name.trim(),
+      url: url.trim(),
+    })
     .where(eq(sub.id, id))
 })

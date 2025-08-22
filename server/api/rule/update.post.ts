@@ -8,6 +8,9 @@ export default defineEventHandler(async (event) => {
   })
 
   await db.update(rule)
-    .set({ value, remark })
+    .set({
+      value: value.trim(),
+      remark: remark?.trim(),
+    })
     .where(eq(rule.id, id))
 })
