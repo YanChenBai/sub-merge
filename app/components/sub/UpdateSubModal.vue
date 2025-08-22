@@ -1,29 +1,26 @@
 <script lang="ts" setup>
-import type { CreateSubSchema } from '#shared/schema'
-import { createSubSchema } from '#shared/schema'
+import type { UpdateSubSchema } from '#shared/schema'
+import { updateSubSchema } from '#shared/schema'
 import { useToggle } from '@vueuse/core'
 
-const state = reactive<CreateSubSchema>({
-  name: '',
-  url: '',
-})
+const props = defineProps<{
+  data: UpdateSubSchema
+}>()
+
+const state = reactive(props.data)
 
 const [isOpen, openToggle] = useToggle()
-const validate = createFormValidator(createSubSchema)
+const validate = createFormValidator(updateSubSchema)
 
-const { isCreating, create } = useSubQuery()
+const { isCreating, update } = useSubQuery()
 
-function handleSubmit(data: CreateSubSchema) {
-  create(data).then(() => openToggle(false))
+function handleSubmit(data: UpdateSubSchema) {
+  update(data).then(() => openToggle(false))
 }
 </script>
 
 <template>
-  <UModal v-model:open="isOpen" title="添加订阅">
-    <UButton @click="openToggle(true)">
-      添加
-    </UButton>
-
+  <UModal v-model:open="isOpen" title="修改订阅">
     <template #body>
       <UForm :state="state" :validate="validate" class="gap-3 grid" @submit="(event) => handleSubmit(event.data)">
         <UFormField label="名称" name="name">

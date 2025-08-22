@@ -1,9 +1,9 @@
 import type { Static } from '@sinclair/typebox'
 
-export const schema = T.Object({
+export const loginSchema = T.Object({
   token: T.String({
     minLength: 1,
   }),
 })
 
-export type Schema = Static<typeof schema>
+export type LoginSchema = Static<typeof loginSchema>

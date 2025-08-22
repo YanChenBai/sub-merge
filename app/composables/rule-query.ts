@@ -1,5 +1,5 @@
 import type { Rule } from '#server/db'
-import type { Schema } from '../components/rule/schema'
+import type { CreateRuleSchema } from '#shared/schema'
 
 export const useRuleQuery = defineQuery(() => {
   const toast = useToast()
@@ -17,7 +17,7 @@ export const useRuleQuery = defineQuery(() => {
 
   const { mutateAsync: create, isLoading: isCreating } = useMutation({
     key: () => ['rule-create'],
-    async mutation(schema: Schema) {
+    async mutation(schema: CreateRuleSchema) {
       return $fetch('/api/rule/create', {
         method: 'POST',
         body: schema,

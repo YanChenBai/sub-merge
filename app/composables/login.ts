@@ -1,10 +1,10 @@
-import type { Schema } from '~~/app/components/login/schema'
+import type { LoginSchema } from '#shared/schema'
 
 export const useLogin = defineQuery(() => {
   const toast = useToast()
 
   const { mutateAsync: login, isLoading } = useMutation({
-    async mutation(schema: Schema) {
+    async mutation(schema: LoginSchema) {
       return $fetch('/api/auth', {
         method: 'POST',
         body: schema,

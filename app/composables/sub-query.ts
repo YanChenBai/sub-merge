@@ -1,5 +1,5 @@
 import type { Sub } from '#server/db'
-import type { Schema } from '../components/sub/schema'
+import type { CreateSubSchema, UpdateSubSchema } from '#shared/schema'
 
 export const useSubQuery = defineQuery(() => {
   const toast = useToast()
@@ -17,7 +17,7 @@ export const useSubQuery = defineQuery(() => {
 
   const { mutateAsync: create, isLoading: isCreating } = useMutation({
     key: () => ['sub-create'],
-    async mutation(schema: Schema) {
+    async mutation(schema: CreateSubSchema) {
       return $fetch('/api/sub/create', {
         method: 'POST',
         body: schema,
@@ -36,6 +36,32 @@ export const useSubQuery = defineQuery(() => {
     onError() {
       toast.add({
         title: '创建失败😅',
+        color: 'error',
+      })
+    },
+  })
+
+  const { mutateAsync: update, isLoading: isUpdating } = useMutation({
+    key: () => ['sub-create'],
+    async mutation(schema: UpdateSubSchema) {
+      return $fetch('/api/sub/update', {
+        method: 'POST',
+        body: schema,
+        credentials: 'include',
+      })
+    },
+
+    onSuccess() {
+      refetch()
+      toast.add({
+        title: '修改成功😎',
+        color: 'success',
+      })
+    },
+
+    onError() {
+      toast.add({
+        title: '修改失败😅',
         color: 'error',
       })
     },
@@ -116,12 +142,14 @@ export const useSubQuery = defineQuery(() => {
     data,
     isLoading,
     isCreating,
+    isUpdating,
     isRemoving,
     isRefreshingSub,
     isSetMainSubLoading,
     toggleMainSub,
     refreshSub,
     create,
+    update,
     remove,
     refetch,
     refresh,

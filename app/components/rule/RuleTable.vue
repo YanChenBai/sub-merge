@@ -6,6 +6,7 @@ import { UButton, USwitch } from '#components'
 import CreateRuleModal from './CreateRuleModal.vue'
 
 const dialog = useDialog()
+const { modal: updateModal } = useUpdateRule()
 const { remove, setEnabled, isLoading, data } = useRuleQuery()
 
 const columns: TableColumn<Rule>[] = [
@@ -43,6 +44,10 @@ const columns: TableColumn<Rule>[] = [
         await remove(row.original.id)
       }
 
+      async function handleUpdate() {
+        await updateModal.open({ data: row.original })
+      }
+
       return (
         <div class="flex gap-2 justify-end items-center">
           <USwitch
@@ -50,6 +55,18 @@ const columns: TableColumn<Rule>[] = [
             onUpdate:modelValue={handleEnabledUpdate}
           >
           </USwitch>
+
+          <UButton
+            size="sm"
+            color="neutral"
+            icon="fluent:edit-12-filled"
+            variant="ghost"
+            loadingAuto
+            onClick={handleUpdate}
+          >
+            修改
+          </UButton>
+
           <UButton
             size="sm"
             color="error"
@@ -68,7 +85,7 @@ const columns: TableColumn<Rule>[] = [
 </script>
 
 <template>
-  <Table :data="data ?? []" :columns="columns" :table-max-height="26" title="订阅列表" :loading="isLoading">
+  <Table :data="data ?? []" :columns="columns" :table-max-height="26" title="规则列表" :loading="isLoading">
     <template #header>
       <div class="flex justify-end">
         <CreateRuleModal />

@@ -3,10 +3,13 @@ import type { Table } from '#components'
 import type { Sub } from '#server/db'
 import type { TableColumn } from '@nuxt/ui'
 import { UButton } from '#components'
+import { useClipboard } from '@vueuse/core'
 import CreateSubModal from './CreateSubModal.vue'
 
 const dialog = useDialog()
+const { modal: subModal } = useUpdateSub()
 const { data, isLoading, refreshSub, remove, toggleMainSub } = useSubQuery()
+const { copy } = useClipboard({ source: `${window.origin}/sub/` })
 
 const columns: TableColumn<Sub>[] = [
   {
@@ -44,6 +47,12 @@ const columns: TableColumn<Sub>[] = [
         await toggleMainSub(row.original.id)
       }
 
+      async function handleUpdate() {
+        await subModal.open({
+          data: row.original,
+        })
+      }
+
       async function handleRefresh() {
         await refreshSub(row.original.id)
       }
@@ -73,6 +82,17 @@ const columns: TableColumn<Sub>[] = [
           <UButton
             size="sm"
             color="neutral"
+            icon="fluent:edit-12-filled"
+            variant="ghost"
+            loadingAuto
+            onClick={handleUpdate}
+          >
+            修改
+          </UButton>
+
+          <UButton
+            size="sm"
+            color="neutral"
             icon="mingcute:refresh-2-fill"
             variant="ghost"
             loadingAuto
@@ -96,12 +116,19 @@ const columns: TableColumn<Sub>[] = [
     },
   },
 ]
+
+function handleCopy() {
+  copy()
+}
 </script>
 
 <template>
   <Table :data="data ?? []" :columns="columns" :table-max-height="20" title="订阅列表" :loading="isLoading">
     <template #header>
-      <div class="flex justify-end">
+      <div class="flex justify-end gap-2">
+        <UButton @click="handleCopy">
+          复制订阅地址
+        </UButton>
         <CreateSubModal />
       </div>
     </template>

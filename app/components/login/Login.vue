@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import type { Schema } from './schema'
-import { schema } from './schema'
+import type { LoginSchema } from '#shared/schema'
+import { loginSchema } from '#shared/schema'
 
 const { login, isLoading } = useLogin()
 
-const state = reactive<Schema>({
+const state = reactive<LoginSchema>({
   token: '',
 })
 
-const validate = createFormValidator(schema)
+const validate = createFormValidator(loginSchema)
 
-function handleSubmit(data: Schema) {
+function handleSubmit(data: LoginSchema) {
   login(data)
 }
 </script>

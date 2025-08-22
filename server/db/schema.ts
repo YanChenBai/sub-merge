@@ -16,7 +16,7 @@ export const sub = pgTable('sub', {
 
 export const rule = pgTable('rule', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  value: varchar().notNull(),
+  value: varchar().unique().notNull(),
   enabled: boolean().notNull().default(true),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),

@@ -1,30 +1,30 @@
 <script lang="ts" setup>
-import type { CreateRuleSchema } from '#shared/schema'
-import { createRuleSchema } from '#shared/schema'
+import type { UpdateRuleSchema } from '#shared/schema'
+import { updateRuleSchema } from '#shared/schema'
 import { useToggle } from '@vueuse/core'
 
+const props = defineProps<{
+  data: UpdateRuleSchema
+}>()
+
 defineEmits<{
-  (e: 'submit', data: CreateRuleSchema): void
+  (e: 'submit', data: UpdateRuleSchema): void
 }>()
 
 const [isOpen, openToggle] = useToggle()
 const { create, isCreating } = useRuleQuery()
 
-const state = reactive<CreateRuleSchema>({
-  value: '',
-})
+const state = reactive<UpdateRuleSchema>(props.data)
 
-const validate = createFormValidator(createRuleSchema)
+const validate = createFormValidator(updateRuleSchema)
 
-function handleSubmit(data: CreateRuleSchema) {
+function handleSubmit(data: UpdateRuleSchema) {
   create(data).then(() => openToggle(false))
 }
 </script>
 
 <template>
-  <UModal v-model:open="isOpen" title="添加规则">
-    <UButton>添加</UButton>
-
+  <UModal v-model:open="isOpen" title="修改规则">
     <template #body>
       <UForm :state="state" :validate="validate" class="gap-3 grid" @submit="(event) => handleSubmit(event.data)">
         <UFormField label="规则" name="value">

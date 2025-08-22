@@ -1,3 +1,4 @@
+import type { CreateRuleSchema } from '#shared/schema'
 import { db, rule } from '#server/db'
 import { createInsertSchema } from 'drizzle-typebox'
 

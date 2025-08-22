@@ -1,11 +1,9 @@
 import { db, sub } from '#server/db'
-import { createInsertSchema } from 'drizzle-typebox'
-
-const subInsertSchema = createInsertSchema(sub)
+import { createSubSchema } from '#shared/schema/sub'
 
 export default defineEventHandler(async (event) => {
   const data = await readValidatedBody(event, (body) => {
-    return TValue.Parse(T.Omit(subInsertSchema, ['updatedAt', 'createdAt', 'content', 'main']), body)
+    return TValue.Parse(createSubSchema, body)
   })
 
   await db.insert(sub).values(data)
