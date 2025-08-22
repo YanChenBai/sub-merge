@@ -34,7 +34,7 @@ const { data: isLogin, isLoading } = useQuery({
   <Transition v-if="!isLoading">
     <template v-if="isLogin">
       <UTabs
-        :items="items" class="w-full" :default-value="String($route.query.tab) ?? 'sub'"
+        :items="items" class="w-full" :default-value="$route.query.tab ? String($route.query.tab) : 'sub'"
         @update:model-value="(value) => $router.push({ path: '/', query: { tab: value } })"
       >
         <template #sub>
