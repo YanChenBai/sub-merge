@@ -31,6 +31,13 @@ const columns: TableColumn<Sub>[] = [
   {
     accessorKey: 'url',
     header: 'URL',
+    cell({ row }) {
+      return (
+        <div class="w-[300px] text-ellipsis overflow-hidden" title={row.original.url}>
+          {row.original.url}
+        </div>
+      )
+    },
   },
   {
     accessorKey: 'updatedAt',
