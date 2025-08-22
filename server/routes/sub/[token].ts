@@ -96,5 +96,10 @@ export default defineEventHandler(async (event) => {
       return item
     })
 
+  setHeaders(event, {
+    'Content-Type': ' text/plain; charset=utf-8',
+    'X-Content-Type-Options': 'nosniff',
+  })
+
   return YAML.stringify(primarySubs)
 })
