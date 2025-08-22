@@ -25,7 +25,7 @@ export default defineNuxtConfig({
   sourcemap: false,
   nitro: {
     compressPublicAssets: false,
-    preset: process.env.PRESET || 'bun',
+    preset: process.env.NITRO_PRESET || 'bun',
   },
   imports: {
     dirs: [

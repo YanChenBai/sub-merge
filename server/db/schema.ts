@@ -1,4 +1,5 @@
 import type { InferInsertModel, InferSelectModel } from 'drizzle-orm'
+import { desc } from 'drizzle-orm'
 import { boolean, index, integer, pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core'
 
 export const sub = pgTable('sub', {
@@ -18,6 +19,7 @@ export const rule = pgTable('rule', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   value: varchar().unique().notNull(),
   enabled: boolean().notNull().default(true),
+  remark: varchar(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 }, table => [

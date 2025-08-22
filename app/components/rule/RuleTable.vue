@@ -3,11 +3,24 @@ import type { Table } from '#components'
 import type { Rule } from '#server/db'
 import type { TableColumn } from '@nuxt/ui'
 import { UButton, USwitch } from '#components'
+import { refThrottled } from '@vueuse/core'
 import CreateRuleModal from './CreateRuleModal.vue'
 
+const input = ref('')
+const throttled = refThrottled(input, 300)
 const dialog = useDialog()
 const { modal: updateModal } = useUpdateRule()
-const { remove, setEnabled, isLoading, data } = useRuleQuery()
+const { remove, setEnabled, refetch, isLoading, data } = useRuleQuery()
+
+const searchData = computed(() => {
+  if (!data.value)
+    return []
+
+  if (!throttled.value)
+    return data.value
+
+  return data.value.filter(rule => rule.value.includes(throttled.value))
+})
 
 const columns: TableColumn<Rule>[] = [
   {
@@ -21,7 +34,27 @@ const columns: TableColumn<Rule>[] = [
     accessorKey: 'value',
     header: '规则',
     meta: {
-      class: { th: 'w-[200px]' },
+      class: {
+        th: 'text-center',
+        td: 'text-center',
+      },
+    },
+  },
+  {
+    accessorKey: 'remark',
+    header: '备注',
+    meta: {
+      class: { th: 'w-[100px]' },
+    },
+  },
+  {
+    accessorKey: 'updatedAt',
+    header: 'UpdatedAt',
+    meta: {
+      class: { th: 'w-[100px]' },
+    },
+    cell(props) {
+      return formatDay(props.row.original.updatedAt)
     },
   },
   {
@@ -85,9 +118,22 @@ const columns: TableColumn<Rule>[] = [
 </script>
 
 <template>
-  <Table :data="data ?? []" :columns="columns" :table-max-height="26" title="规则列表" :loading="isLoading">
+  <Table :data="searchData" :columns="columns" :table-max-height="26" title="规则列表" :loading="isLoading">
     <template #header>
-      <div class="flex justify-end">
+      <div class="flex justify-end gap-2 sm:flex-row flex-col">
+        <UInput v-model:model-value="input" placeholder="搜索规则" />
+        <UButton
+          size="sm"
+          color="neutral"
+          icon="mingcute:refresh-2-fill"
+          variant="ghost"
+          loading-auto
+          class="justify-center"
+          @click="async () => { await refetch() }"
+        >
+          刷新
+        </UButton>
+
         <CreateRuleModal />
       </div>
     </template>

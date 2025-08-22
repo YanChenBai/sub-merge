@@ -22,7 +22,7 @@ defineSlots<TableSlots & Omit<CardSlots, 'default'>>()
     }"
   >
     <template #header>
-      <div class="flex justify-between text-primary">
+      <div class="flex justify-between text-primary sm:flex-row flex-col gap-2">
         <h3 class="font-black">
           {{ title }}
         </h3>
@@ -41,7 +41,7 @@ defineSlots<TableSlots & Omit<CardSlots, 'default'>>()
       }"
       :ui="{
         base: 'w-full',
-        tr: 'hover:bg-white/3 transition-all',
+        tr: 'hover:bg-white/3 transition-[background]',
         th: 'sticky top-0 inset-x-0 bg-default/75 z-[1] backdrop-blur text-xs',
         td: 'py-3',
         separator: 'bg-muted',

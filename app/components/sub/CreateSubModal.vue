@@ -20,7 +20,7 @@ function handleSubmit(data: CreateSubSchema) {
 
 <template>
   <UModal v-model:open="isOpen" title="添加订阅">
-    <UButton @click="openToggle(true)">
+    <UButton color="neutral" variant="ghost" @click="openToggle(true)">
       添加
     </UButton>
 

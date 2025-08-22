@@ -1,5 +1,5 @@
 import type { Rule } from '#server/db'
-import type { CreateRuleSchema } from '#shared/schema'
+import type { CreateRuleSchema, UpdateRuleSchema } from '#shared/schema'
 
 export const useRuleQuery = defineQuery(() => {
   const toast = useToast()
@@ -65,6 +65,32 @@ export const useRuleQuery = defineQuery(() => {
     },
   })
 
+  const { mutateAsync: update, isLoading: isUpdating } = useMutation({
+    key: () => ['rule-enabled'],
+    mutation: async (data: UpdateRuleSchema) => {
+      return $fetch(`/api/rule/update`, {
+        credentials: 'include',
+        method: 'POST',
+        body: data,
+      })
+    },
+
+    onSuccess() {
+      refetch()
+      toast.add({
+        title: '更新成功🎉',
+        color: 'success',
+      })
+    },
+
+    onError() {
+      toast.add({
+        title: '更新失败😂',
+        color: 'error',
+      })
+    },
+  })
+
   const { mutateAsync: setEnabled, isLoading: isSetEnabledLoading } = useMutation({
     key: () => ['rule-enabled'],
     mutation: async ({ id, value }: { id: number, value: boolean }) => {
@@ -99,10 +125,12 @@ export const useRuleQuery = defineQuery(() => {
     isCreating,
     isRemoving,
     isSetEnabledLoading,
+    isUpdating,
     refetch,
     refresh,
     create,
     remove,
     setEnabled,
+    update,
   }
 })

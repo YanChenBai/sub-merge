@@ -8,8 +8,9 @@ import CreateSubModal from './CreateSubModal.vue'
 
 const dialog = useDialog()
 const { modal: subModal } = useUpdateSub()
-const { data, isLoading, refreshSub, remove, toggleMainSub } = useSubQuery()
+const { data, isLoading, refreshSub, remove, toggleMainSub, refetch } = useSubQuery()
 const source = ref('')
+const toast = useToast()
 const { copy } = useClipboard({ source })
 
 const columns: TableColumn<Sub>[] = [
@@ -30,6 +31,16 @@ const columns: TableColumn<Sub>[] = [
   {
     accessorKey: 'url',
     header: 'URL',
+  },
+  {
+    accessorKey: 'updatedAt',
+    header: 'UpdatedAt',
+    meta: {
+      class: { th: 'w-[200px]' },
+    },
+    cell(props) {
+      return formatDay(props.row.original.updatedAt)
+    },
   },
   {
     id: 'actions',
@@ -120,6 +131,11 @@ const columns: TableColumn<Sub>[] = [
 
 function handleCopy() {
   copy()
+  toast.add({
+    title: '复制成功😎',
+    description: '你需要拼接 Token 后才能使用捏~',
+    color: 'success',
+  })
 }
 
 onMounted(() => source.value = `${window.origin}/sub/`)
@@ -129,9 +145,21 @@ onMounted(() => source.value = `${window.origin}/sub/`)
   <Table :data="data ?? []" :columns="columns" :table-max-height="20" title="订阅列表" :loading="isLoading">
     <template #header>
       <div class="flex justify-end gap-2">
-        <UButton @click="handleCopy">
+        <UButton
+          size="sm"
+          color="neutral"
+          icon="mingcute:refresh-2-fill"
+          variant="ghost"
+          loading-auto
+          @click="async () => { await refetch() }"
+        >
+          刷新
+        </UButton>
+
+        <UButton color="neutral" variant="ghost" @click="handleCopy">
           复制订阅地址
         </UButton>
+
         <CreateSubModal />
       </div>
     </template>

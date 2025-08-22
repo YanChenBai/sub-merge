@@ -12,6 +12,7 @@ const { create, isCreating } = useRuleQuery()
 
 const state = reactive<CreateRuleSchema>({
   value: '',
+  remark: '',
 })
 
 const validate = createFormValidator(createRuleSchema)
@@ -23,12 +24,18 @@ function handleSubmit(data: CreateRuleSchema) {
 
 <template>
   <UModal v-model:open="isOpen" title="添加规则">
-    <UButton>添加</UButton>
+    <UButton color="neutral" variant="ghost" class="justify-center">
+      添加
+    </UButton>
 
     <template #body>
       <UForm :state="state" :validate="validate" class="gap-3 grid" @submit="(event) => handleSubmit(event.data)">
         <UFormField label="规则" name="value">
           <UInput v-model="state.value" class="w-full" />
+        </UFormField>
+
+        <UFormField label="备注" name="value">
+          <UInput v-model="state.remark" class="w-full" />
         </UFormField>
 
         <UButton type="submit" class="w-full !justify-center" :loading="isCreating">

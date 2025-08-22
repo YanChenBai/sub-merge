@@ -7,19 +7,15 @@ const props = defineProps<{
   data: UpdateRuleSchema
 }>()
 
-defineEmits<{
-  (e: 'submit', data: UpdateRuleSchema): void
-}>()
-
-const [isOpen, openToggle] = useToggle()
-const { create, isCreating } = useRuleQuery()
+const [isOpen, modalToggle] = useToggle()
+const { update, isUpdating } = useRuleQuery()
 
 const state = reactive<UpdateRuleSchema>(props.data)
 
 const validate = createFormValidator(updateRuleSchema)
 
 function handleSubmit(data: UpdateRuleSchema) {
-  create(data).then(() => openToggle(false))
+  update(data).then(() => modalToggle(false))
 }
 </script>
 
@@ -31,7 +27,11 @@ function handleSubmit(data: UpdateRuleSchema) {
           <UInput v-model="state.value" class="w-full" />
         </UFormField>
 
-        <UButton type="submit" class="w-full !justify-center" :loading="isCreating">
+        <UFormField label="备注" name="value">
+          <UInput v-model="state.remark" class="w-full" />
+        </UFormField>
+
+        <UButton type="submit" class="w-full !justify-center" :loading="isUpdating">
           提交
         </UButton>
       </UForm>

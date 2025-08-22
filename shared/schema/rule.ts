@@ -5,9 +5,15 @@ export const createRuleSchema = T.Object({
     maxLength: 255,
     minLength: 1,
   }),
+  remark: T.Optional(T.Union([T.String(), T.Null()])),
 })
 
-export const updateRuleSchema = createRuleSchema
+export const updateRuleSchema = T.Intersect([
+  createRuleSchema,
+  T.Object({
+    id: T.Number(),
+  }),
+])
 
 export type CreateRuleSchema = Static<typeof createRuleSchema>
 export type UpdateRuleSchema = Static<typeof updateRuleSchema>
