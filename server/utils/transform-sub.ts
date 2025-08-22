@@ -15,7 +15,7 @@ export function vmessToUri(node: Vmess) {
     v: '2',
     ps: node.name,
     add: node.server,
-    port: node.port,
+    port: `${node.port}`,
     id: node.uuid,
     aid: node.alterId,
     tls: node.tls || '',

@@ -5,7 +5,7 @@ export interface Trojan {
   'port': number
   'password': string
   'sni': string
-  'skip-cert-verify': boolean
+  'skip-cert-verify'?: boolean
   'udp': boolean
   'tls': boolean
 }
