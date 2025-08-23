@@ -1,3 +1,5 @@
-export const SELECT_POINT = '🚀 节点选择'
-export const DIRECT_POINT = 'DIRECT'
+/** 直连节点 */
+export const DIRECT = 'DIRECT'
+
+/** 空订阅 */
 export const EMPTY_SUB = 'proxies:'

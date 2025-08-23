@@ -1,5 +1,5 @@
 import type { Proxy, SubContent } from '#server/types'
-import { DIRECT_POINT, EMPTY_SUB, SELECT_POINT } from '#server/constants'
+import { DIRECT, EMPTY_SUB } from '#server/constants'
 import { db, rule, sub } from '#server/db'
 import { Platform } from '#server/types'
 import { targetSchema } from '#shared/schema'
@@ -10,6 +10,24 @@ import YAML from 'yaml'
 async function getCustomRules() {
   const rows = await db.select({ value: rule.value }).from(rule).where(eq(rule.enabled, true))
   return rows.map(({ value }) => value)
+}
+
+function formatProxyName(prefix: string, name: string) {
+  return name.startsWith(prefix) ? name : `${prefix} | ${name}`
+}
+
+function formatProxiesName(name: string, proxies: Proxy[]) {
+  return proxies.map((proxy) => {
+    return {
+      ...proxy,
+      name: formatProxyName(name, proxy.name),
+    }
+  })
+}
+
+function difference<T>(a: T[], b: T[]): T[] {
+  const setB = new Set(b)
+  return [...new Set(a)].filter(x => !setB.has(x))
 }
 
 export default defineEventHandler(async (event) => {
@@ -25,26 +43,37 @@ export default defineEventHandler(async (event) => {
 
   // 数据库查询
   const rows = await db
-    .select({ id: sub.id, content: sub.content, main: sub.main, name: sub.name })
+    .select({
+      id: sub.id,
+      content: sub.content,
+      main: sub.main,
+      name: sub.name,
+    })
     .from(sub)
     .orderBy(desc(sub.main))
 
   if (rows.length === 0)
     return EMPTY_SUB
 
+  // 解析订阅内容, 并且添加订阅名称前缀
   const subscriptions = rows.map((row) => {
     const parseContent = row.content ? (YAML.parse(row.content) as SubContent) : null
-    const proxies = parseContent?.proxies.map((item) => {
+
+    if (!parseContent) {
       return {
-        ...item,
-        name: `${row.name} | ${item.name}`,
+        ...row,
+        content: null,
       }
-    })
+    }
+
+    const rawProxyNames = [...parseContent?.proxies ?? []].map(proxy => proxy.name)
+
     return {
       ...row,
+      rawProxyNames,
       content: {
         ...parseContent,
-        proxies,
+        proxies: formatProxiesName(row.name, parseContent.proxies),
       },
     }
   })
@@ -54,23 +83,25 @@ export default defineEventHandler(async (event) => {
     'X-Content-Type-Options': 'nosniff',
   })
 
-  // 合并所有 proxies
-  const allProxies = subscriptions.reduce((pre, cur) => {
-    const proxies = cur.content.proxies
-    return proxies ? pre.concat(proxies) : pre
-  }, [] as Proxy[])
+  let proxies: Proxy[] = []
+
+  // 合并所有代理节点
+  proxies = subscriptions.reduce(
+    (pre, { content }) => {
+      return content?.proxies ? pre.concat(content.proxies) : pre
+    },
+    proxies,
+  )
 
   // 如果指定了 v2ray 直接转换返回
   if (target === Platform.V2RAY)
-    return transformToV2ray(allProxies)
+    return transformToV2ray(proxies)
 
   // 主订阅（优先 main，否则取第一个）
   const primarySubs = subscriptions.find(s => s.main) ?? subscriptions[0]
 
   // 所有节点名称
-  const allNodeNames = allProxies.map(item => item.name)
-    // 过滤特殊节点
-    .filter(item => item !== SELECT_POINT && item !== DIRECT_POINT)
+  const proxyNameList = [...new Set(proxies.map(item => item.name))]
 
   if (!primarySubs.content)
     return EMPTY_SUB
@@ -81,14 +112,21 @@ export default defineEventHandler(async (event) => {
   // 合并规则
   primarySubs.content.rules?.unshift(...additionalRules)
 
-  primarySubs.content.proxies = allProxies
+  primarySubs.content.proxies = proxies
 
   primarySubs.content['proxy-groups'] = primarySubs.content['proxy-groups']
-    ?.map((item) => {
-      item.proxies = item.name.includes('节点选择')
-        ? [DIRECT_POINT, ...allNodeNames]
-        : [DIRECT_POINT, SELECT_POINT, ...allNodeNames]
-      return item
+    ?.map((group) => {
+      group.proxies = [...new Set(
+        [
+          DIRECT,
+          // 保留不在 proxies 中的节点
+          ...difference(primarySubs.rawProxyNames, group.proxies),
+
+          // 过滤与当前分组名相等的代理
+          ...proxyNameList.filter(name => name !== group.name),
+        ],
+      )]
+      return group
     })
 
   return YAML.stringify(primarySubs.content)
