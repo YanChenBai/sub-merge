@@ -1,7 +1,7 @@
 import type { SubContent } from '#server/types'
 import { db, sub } from '#server/db'
 import { Platform } from '#server/types'
-import { targetSchema } from '#shared/schema'
+import { querySchema } from '#shared/schema'
 import { eq } from 'drizzle-orm'
 import YAML from 'yaml'
 
@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
     return TValue.Parse(T.Object({ name: T.String() }), params)
   })
 
-  const { target } = await getValidatedQuery(event, data => TValue.Parse(targetSchema, data))
+  const { target } = await getValidatedQuery(event, data => TValue.Parse(querySchema, data))
 
   const rows = await db.select({ content: sub.content })
     .from(sub)

@@ -2,7 +2,7 @@ import type { Proxy, SubContent } from '#server/types'
 import { DIRECT, EMPTY_SUB } from '#server/constants'
 import { db, group, rule, sub } from '#server/db'
 import { Platform } from '#server/types'
-import { targetSchema } from '#shared/schema'
+import { querySchema } from '#shared/schema'
 import { desc, eq } from 'drizzle-orm'
 import YAML from 'yaml'
 
@@ -42,7 +42,7 @@ function difference<T>(a: T[], b: T[]): T[] {
 
 export default defineEventHandler(async (event) => {
   const token = getRouterParam(event, 'token')
-  const { target } = await getValidatedQuery(event, data => TValue.Parse(targetSchema, data))
+  const { target, filter } = await getValidatedQuery(event, data => TValue.Parse(querySchema, data))
 
   if (!validateToken(token)) {
     throw createError({
@@ -113,7 +113,7 @@ export default defineEventHandler(async (event) => {
   const primarySub = subscriptions.find(s => s.main) ?? subscriptions[0]
 
   // 所有节点名称
-  const proxyNameList = [...new Set(proxies.map(item => item.name))]
+  const proxyNameList = [...new Set(proxies.map(item => item.name))].filter(item => filter ? !item.includes(filter) : true)
 
   if (!primarySub.content)
     return EMPTY_SUB
@@ -124,7 +124,7 @@ export default defineEventHandler(async (event) => {
   // 合并规则
   primarySub.content.rules?.unshift(...additionalRules)
 
-  primarySub.content.proxies = proxies
+  primarySub.content.proxies = proxies.filter(item => filter ? !item.name.includes(filter) : true)
 
   primarySub.content['proxy-groups'] = primarySub.content['proxy-groups']
     ?.map((group) => {
