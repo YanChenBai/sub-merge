@@ -120,8 +120,7 @@ export default defineEventHandler(async (event) => {
         [
           DIRECT,
           // 保留不在 proxies 中的节点
-          ...difference(primarySubs.rawProxyNames, group.proxies),
-
+          ...difference(group.proxies, primarySubs.rawProxyNames),
           // 过滤与当前分组名相等的代理
           ...proxyNameList.filter(name => name !== group.name),
         ],
