@@ -22,10 +22,10 @@ defineSlots<TableSlots & Omit<CardSlots, 'default'>>()
     }"
   >
     <template #header>
-      <div class="flex justify-between text-primary sm:flex-row flex-col gap-2">
-        <h3 class="font-black">
+      <div class="flex justify-end text-primary sm:flex-row flex-col gap-2">
+        <!-- <h3 class="font-black">
           {{ title }}
-        </h3>
+        </h3> -->
         <slot name="header" />
       </div>
     </template>

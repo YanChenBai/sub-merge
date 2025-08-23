@@ -1,18 +1,19 @@
 <script lang="ts" setup>
-import type { UpdateRuleSchema } from '#shared/schema'
-import { updateRuleSchema } from '#shared/schema'
+import type { UpdateGroupSchema } from '#shared/schema'
+import { updateGroupSchema } from '#shared/schema'
+import { useToggle } from '@vueuse/core'
 
 const props = defineProps<{
-  data: UpdateRuleSchema
+  data: UpdateGroupSchema
 }>()
 
 const emit = defineEmits(['close'])
 
-const { update, isUpdating } = useRuleQuery()
-const state = reactive<UpdateRuleSchema>(props.data)
-const validate = createFormValidator(updateRuleSchema)
+const { update, isUpdating } = useGroupQuery()
+const state = reactive<UpdateGroupSchema>(props.data)
+const validate = createFormValidator(updateGroupSchema)
 
-function handleSubmit(data: UpdateRuleSchema) {
+function handleSubmit(data: UpdateGroupSchema) {
   update(data).then(() => emit('close'))
 }
 </script>
@@ -22,11 +23,7 @@ function handleSubmit(data: UpdateRuleSchema) {
     <template #body>
       <UForm :state="state" :validate="validate" class="gap-3 grid" @submit="(event) => handleSubmit(event.data)">
         <UFormField label="规则" name="value">
-          <UInput v-model="state.value" class="w-full" />
-        </UFormField>
-
-        <UFormField label="备注" name="value">
-          <UInput v-model="state.remark" class="w-full" />
+          <UInput v-model="state.name" class="w-full" />
         </UFormField>
 
         <UButton type="submit" class="w-full !justify-center" :loading="isUpdating">
@@ -36,7 +33,3 @@ function handleSubmit(data: UpdateRuleSchema) {
     </template>
   </UModal>
 </template>
-
-<style>
-
-</style>

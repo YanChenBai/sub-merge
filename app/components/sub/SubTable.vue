@@ -7,7 +7,7 @@ import { useClipboard } from '@vueuse/core'
 import CreateSubModal from './CreateSubModal.vue'
 
 const dialog = useDialog()
-const { modal: subModal } = useUpdateSub()
+const subModal = useUpdateSubModal()
 const { data, isLoading, refreshSub, remove, toggleMainSub, refetch } = useSubQuery()
 const source = ref('')
 const toast = useToast()
@@ -149,7 +149,7 @@ onMounted(() => source.value = `${window.origin}/sub/`)
 </script>
 
 <template>
-  <Table :data="data ?? []" :columns="columns" :table-max-height="60" title="订阅列表" :loading="isLoading">
+  <Table :data="data ?? []" :columns="columns" :table-max-height="60" :loading="isLoading">
     <template #header>
       <div class="flex justify-end gap-2">
         <UButton

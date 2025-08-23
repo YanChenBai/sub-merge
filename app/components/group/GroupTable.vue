@@ -1,16 +1,16 @@
 <script lang="tsx" setup>
 import type { Table } from '#components'
-import type { Rule } from '#server/db'
+import type { Group } from '#server/db'
 import type { TableColumn } from '@nuxt/ui'
 import { UButton, USwitch } from '#components'
 import { refThrottled } from '@vueuse/core'
-import CreateRuleModal from './CreateRuleModal.vue'
+import CreateRuleModal from './CreateGroupModal.vue'
 
 const input = ref('')
 const throttled = refThrottled(input, 300)
 const dialog = useDialog()
-const updateModal = useUpdateRuleModal()
-const { remove, setEnabled, refetch, isLoading, data } = useRuleQuery()
+const updateModal = useUpdateGroupModal()
+const { remove, setEnabled, refetch, updateInsertProxies, isLoading, data } = useGroupQuery()
 
 const searchData = computed(() => {
   if (!data.value)
@@ -19,10 +19,10 @@ const searchData = computed(() => {
   if (!throttled.value)
     return data.value
 
-  return data.value.filter(rule => rule.value.toLocaleLowerCase().includes(throttled.value.toLocaleLowerCase()))
+  return data.value.filter(item => item.name.toLocaleLowerCase().includes(throttled.value.toLocaleLowerCase()))
 })
 
-const columns: TableColumn<Rule>[] = [
+const columns: TableColumn<Group>[] = [
   {
     accessorKey: 'id',
     header: 'ID',
@@ -31,20 +31,13 @@ const columns: TableColumn<Rule>[] = [
     },
   },
   {
-    accessorKey: 'value',
-    header: '规则',
+    accessorKey: 'name',
+    header: '分组名',
     meta: {
       class: {
         th: 'text-center',
         td: 'text-center',
       },
-    },
-  },
-  {
-    accessorKey: 'remark',
-    header: '备注',
-    meta: {
-      class: { th: 'w-[100px]' },
     },
   },
   {
@@ -58,16 +51,52 @@ const columns: TableColumn<Rule>[] = [
     },
   },
   {
-    id: 'actions',
+    id: 'enabled',
+    header: '插入分组',
     meta: {
-      class: { th: 'w-[200px]' },
+      class: { th: 'w-[80px]' },
     },
-
     cell({ row }) {
-      async function handleEnabledUpdate(value: boolean) {
+      async function handleUpdate(value: boolean) {
+        await updateInsertProxies({ id: row.original.id, value })
+      }
+
+      return (
+        <USwitch
+          defaultValue={row.original.insertProxies}
+          onUpdate:modelValue={handleUpdate}
+        >
+        </USwitch>
+      )
+    },
+  },
+  {
+    id: 'enabled',
+    header: '启用',
+    meta: {
+      class: { th: 'w-[80px]' },
+    },
+    cell({ row }) {
+      async function handleUpdate(value: boolean) {
         await setEnabled({ id: row.original.id, value })
       }
 
+      return (
+        <USwitch
+          defaultValue={row.original.enabled}
+          onUpdate:modelValue={handleUpdate}
+        >
+        </USwitch>
+      )
+    },
+  },
+  {
+    id: 'actions',
+    meta: {
+      class: { th: 'w-[100px]' },
+    },
+
+    cell({ row }) {
       async function handleRemove() {
         await dialog.open({
           title: '确定要删除该规则吗？',
@@ -83,12 +112,6 @@ const columns: TableColumn<Rule>[] = [
 
       return (
         <div class="flex gap-2 justify-end items-center">
-          <USwitch
-            defaultValue={row.original.enabled}
-            onUpdate:modelValue={handleEnabledUpdate}
-          >
-          </USwitch>
-
           <UButton
             size="sm"
             color="neutral"
@@ -121,7 +144,7 @@ const columns: TableColumn<Rule>[] = [
   <Table :data="searchData" :columns="columns" :table-max-height="60" :loading="isLoading">
     <template #header>
       <div class="grid gap-2 grid-cols-[1fr_auto_auto]">
-        <UInput v-model:model-value="input" placeholder="搜索规则" />
+        <UInput v-model:model-value="input" placeholder="搜索分组" />
         <UButton
           size="sm"
           color="neutral"

@@ -9,16 +9,22 @@ useHead(() => {
 
 const items = [
   {
-    label: '订阅记录',
+    label: '订阅列表',
     icon: 'fontisto:email',
     slot: 'sub',
     value: 'sub',
   },
   {
-    label: '规则记录',
+    label: '规则列表',
     icon: 'mynaui:ruler',
     slot: 'rule',
     value: 'rule',
+  },
+  {
+    label: '分组列表',
+    icon: 'material-symbols-light:stack-group-outline',
+    slot: 'group',
+    value: 'group',
   },
 ] satisfies TabsItem[]
 
@@ -42,6 +48,9 @@ const { data: isLogin } = useQuery({
         </template>
         <template #rule>
           <RuleTable />
+        </template>
+        <template #group>
+          <GroupTable />
         </template>
       </UTabs>
     </template>

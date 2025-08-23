@@ -1,6 +1,6 @@
 import type { Proxy, SubContent } from '#server/types'
 import { DIRECT, EMPTY_SUB } from '#server/constants'
-import { db, rule, sub } from '#server/db'
+import { db, group, rule, sub } from '#server/db'
 import { Platform } from '#server/types'
 import { targetSchema } from '#shared/schema'
 import { desc, eq } from 'drizzle-orm'
@@ -10,6 +10,16 @@ import YAML from 'yaml'
 async function getCustomRules() {
   const rows = await db.select({ value: rule.value }).from(rule).where(eq(rule.enabled, true))
   return rows.map(({ value }) => value)
+}
+
+// 获取所有自定义分组
+async function getCustomGroups() {
+  const rows = await db.select().from(group).where(eq(group.enabled, true))
+
+  return {
+    customGroupNames: rows.map(({ name }) => name),
+    customProxies: rows.filter(({ insertProxies }) => insertProxies).map(({ name }) => name),
+  }
 }
 
 function formatProxyName(prefix: string, name: string) {
@@ -83,6 +93,8 @@ export default defineEventHandler(async (event) => {
     'X-Content-Type-Options': 'nosniff',
   })
 
+  const { customProxies, customGroupNames } = await getCustomGroups()
+
   let proxies: Proxy[] = []
 
   // 合并所有代理节点
@@ -98,29 +110,31 @@ export default defineEventHandler(async (event) => {
     return transformToV2ray(proxies)
 
   // 主订阅（优先 main，否则取第一个）
-  const primarySubs = subscriptions.find(s => s.main) ?? subscriptions[0]
+  const primarySub = subscriptions.find(s => s.main) ?? subscriptions[0]
 
   // 所有节点名称
   const proxyNameList = [...new Set(proxies.map(item => item.name))]
 
-  if (!primarySubs.content)
+  if (!primarySub.content)
     return EMPTY_SUB
 
   // 加载自定义规则
   const additionalRules = await getCustomRules()
 
   // 合并规则
-  primarySubs.content.rules?.unshift(...additionalRules)
+  primarySub.content.rules?.unshift(...additionalRules)
 
-  primarySubs.content.proxies = proxies
+  primarySub.content.proxies = proxies
 
-  primarySubs.content['proxy-groups'] = primarySubs.content['proxy-groups']
+  primarySub.content['proxy-groups'] = primarySub.content['proxy-groups']
     ?.map((group) => {
       group.proxies = [...new Set(
         [
           DIRECT,
+          // 自定义分组的节点
+          ...customProxies,
           // 保留不在 proxies 中的节点
-          ...difference(group.proxies, primarySubs.rawProxyNames),
+          ...difference(group.proxies, primarySub.rawProxyNames),
           // 过滤与当前分组名相等的代理
           ...proxyNameList.filter(name => name !== group.name),
         ],
@@ -128,5 +142,19 @@ export default defineEventHandler(async (event) => {
       return group
     })
 
-  return YAML.stringify(primarySubs.content)
+  // 构建自定义分组
+  const customGroups = customGroupNames.map((name) => {
+    return {
+      name,
+      type: 'select',
+      proxies: [
+        DIRECT,
+        ...proxyNameList,
+      ],
+    }
+  })
+
+  primarySub.content['proxy-groups'].unshift(...customGroups)
+
+  return YAML.stringify(primarySub.content)
 })

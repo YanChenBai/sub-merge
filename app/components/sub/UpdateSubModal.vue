@@ -1,26 +1,24 @@
 <script lang="ts" setup>
 import type { UpdateSubSchema } from '#shared/schema'
 import { updateSubSchema } from '#shared/schema'
-import { useToggle } from '@vueuse/core'
 
 const props = defineProps<{
   data: UpdateSubSchema
 }>()
 
-const state = reactive(props.data)
-
-const [isOpen, openToggle] = useToggle()
-const validate = createFormValidator(updateSubSchema)
+const emit = defineEmits(['close'])
 
 const { isCreating, update } = useSubQuery()
+const state = reactive(props.data)
+const validate = createFormValidator(updateSubSchema)
 
 function handleSubmit(data: UpdateSubSchema) {
-  update(data).then(() => openToggle(false))
+  update(data).then(() => emit('close'))
 }
 </script>
 
 <template>
-  <UModal v-model:open="isOpen" title="修改订阅">
+  <UModal title="修改订阅">
     <template #body>
       <UForm :state="state" :validate="validate" class="gap-3 grid" @submit="(event) => handleSubmit(event.data)">
         <UFormField label="名称" name="name">

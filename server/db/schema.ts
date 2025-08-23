@@ -26,5 +26,17 @@ export const rule = pgTable('rule', {
   index('rule_idx').on(table.id),
 ])
 
+export const group = pgTable('group', {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  name: varchar().unique().notNull(),
+  enabled: boolean().notNull().default(true),
+  insertProxies: boolean().notNull().default(false),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+}, table => [
+  index('group_idx').on(table.id),
+])
+
 export type Sub = InferSelectModel<typeof sub>
 export type Rule = InferSelectModel<typeof rule>
+export type Group = InferSelectModel<typeof group>
